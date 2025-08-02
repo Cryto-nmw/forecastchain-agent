@@ -73,10 +73,6 @@ const Form = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setModalOpen(true);
-    setModalStatus("pending");
-    setModalMessage("Initializing game creation...");
 
     try {
       const formData = {};
@@ -103,6 +99,11 @@ const Form = () => {
         toast.error("At least two answers are required.");
         return;
       }
+
+      setIsSubmitting(true);
+      setModalOpen(true);
+      setModalStatus("pending");
+      setModalMessage("Initializing game creation...");
 
       await createForecastGame(
         formData["question"],
