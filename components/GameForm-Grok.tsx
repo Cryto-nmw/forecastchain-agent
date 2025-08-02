@@ -102,8 +102,8 @@ const Form = () => {
 
       setIsSubmitting(true);
       setModalOpen(true);
-      setModalStatus("pending");
-      setModalMessage("Initializing game creation...");
+      //   setModalStatus("pending");
+      //   setModalMessage("Initializing game creation...");
 
       await createForecastGame(
         formData["question"],
