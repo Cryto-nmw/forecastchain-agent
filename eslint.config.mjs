@@ -30,11 +30,14 @@ const eslintConfig = [
     rules: {
       // Modify the no-explicit-any rule to warn instead of error
       "@typescript-eslint/no-explicit-any": "warn", // Allows `any` with a warning
-      // Optional: Add other custom rules
+      // Allow unused variables named 'isSubmitting' or starting with '_'
       "no-unused-vars": "off", // Disable base rule
       "@typescript-eslint/no-unused-vars": [
         "error",
-        { argsIgnorePattern: "^_" },
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_|isSubmitting", // Ignore variables named 'isSubmitting' or starting with '_'
+        },
       ], // TypeScript-specific unused vars
       "react/prop-types": "off", // Not needed with TypeScript
     },
