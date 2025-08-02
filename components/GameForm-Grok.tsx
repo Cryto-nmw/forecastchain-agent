@@ -84,6 +84,12 @@ const Form = () => {
       formData["answers"] = [];
       formData["odds"] = [];
 
+      if (!formData["question"]) {
+        toast.error("Question is required.");
+        console.log("Question is required.");
+        return;
+      }
+
       answerRefs.current.forEach((value, key) => {
         const ansInput = value;
         const oddInput = oddRefs.current.get(key);
@@ -92,6 +98,11 @@ const Form = () => {
           formData["odds"].push(oddInput?.value);
         }
       });
+
+      if (formData["answers"].length < 2) {
+        toast.error("At least two answers are required.");
+        return;
+      }
 
       await createForecastGame(
         formData["question"],
