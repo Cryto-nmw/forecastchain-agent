@@ -1,12 +1,14 @@
 "use client";
 
 import { switchToSepolia } from "@/lib/metamask";
+import { EthToUsdPrice } from "@/components/EthToUsdPrice";
 import { createForecastGame } from "@/lib/agent-deploy-game";
 import { checkChainIdWithEthers } from "@/lib/ether-metamask";
 import { useMetaMask } from "@/hooks/useMetaMask";
 import { useEffect, useRef, useState } from "react";
 import AnswerOption from "./AnswerOption";
 import { CHAIN_ID } from "@/lib/config";
+import { etherToUSD } from "@/lib/utils";
 import toast from "react-hot-toast";
 import ProgressModal from "./ProgressModal"; // Import the modal
 
@@ -17,6 +19,36 @@ interface ChainStatus {
 }
 
 const Form = () => {
+  const [bonus, setBonus] = useState(0);
+  const [rate, setRate] = useState(0);
+  const [usd, setUSD] = useState(0);
+  const bonusRef = useRef(null);
+
+  const handleIncrement = async () => {
+    // bonusRef.current.value = ;
+    setBonus((prev) => {
+      let bonus = Number((prev + 0.01).toFixed(2));
+      bonus = bonus < 0 ? 0 : bonus;
+      bonusRef.current.value = bonus;
+
+      setUSD(bonus * rate);
+      return bonus;
+    });
+
+    // setUSD(usdRate * bonusRef.current.value);
+  };
+
+  const handleDecrease = () => {
+    // bonusRef.current.value = ;
+    setBonus((prev) => {
+      let bonus = Number((prev - 0.01).toFixed(2));
+      bonus = bonus < 0 ? 0 : bonus;
+      bonusRef.current.value = bonus;
+      setUSD(bonus * rate);
+      return bonus;
+    });
+  };
+
   const { provider, isConnected } = useMetaMask();
   const [isCorrectChain, setCorrectChain] = useState<ChainStatus>({
     status: 0,
@@ -49,8 +81,14 @@ const Form = () => {
         console.error("Chain check error:", error);
       }
     };
-
     callToCheckChain();
+
+    const retriveUSDRate = async () => {
+      const usdRate = await etherToUSD();
+      setRate(usdRate);
+    };
+
+    retriveUSDRate();
   }, [provider, isConnected]);
 
   const changeDedicatedNetwok = async () => {
@@ -109,6 +147,7 @@ const Form = () => {
         formData["question"],
         formData["answers"],
         formData["odds"],
+        bonusRef.current.value,
         (status, message) => {
           setModalStatus(status);
           setModalMessage(message);
@@ -168,6 +207,42 @@ const Form = () => {
                 />
               </div>
               <AnswerOption setAnswerRef={setAnswerRef} setOddRef={setOddRef} />
+
+              <div className="mb-4">
+                <label className="block text-pink-800">奖金池</label>
+                <div className="flex items-center">
+                  <input
+                    readOnly
+                    type="text"
+                    ref={bonusRef}
+                    value={bonus}
+                    onChange={(e) => setBonus(Number(e.target.value))}
+                    step="0.01"
+                    className="border p-2 w-full rounded text-pink-800"
+                  />
+
+                  <button
+                    ref={bonusRef}
+                    type="button"
+                    onClick={handleIncrement}
+                    className="ml-2 bg-pink-800 text-white p-2 rounded"
+                  >
+                    +
+                  </button>
+                  <button
+                    ref={bonusRef}
+                    type="button"
+                    onClick={handleDecrease}
+                    className="ml-2 bg-pink-800 text-white p-2 rounded"
+                  >
+                    -
+                  </button>
+                </div>
+              </div>
+
+              <div className="mb-4 flex justify-end">
+                <EthToUsdPrice usd={usd} />
+              </div>
               <button
                 type="submit"
                 className="bg-blue-500 text-white p-2 rounded w-full"

@@ -9,7 +9,7 @@ interface Option {
 }
 
 const AnswerOption = ({ setAnswerRef, setOddRef }) => {
-  const [options, setOptions] = useState<Option[]>([{ answer: "", odds: "" }]);
+  const [options, setOptions] = useState<Option[]>([{ answer: "", odds: "1" }]);
 
   const handleAddOption = () => {
     setOptions([...options, { answer: "", odds: "" }]);
@@ -60,13 +60,15 @@ const AnswerOption = ({ setAnswerRef, setOddRef }) => {
           </div>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={handleAddOption}
-        className="bg-red-500 text-white p-2 rounded"
-      >
-        添加更多
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={handleAddOption}
+          className="bg-red-500 text-white p-2 rounded"
+        >
+          添加更多
+        </button>
+      </div>
     </div>
   );
 };
