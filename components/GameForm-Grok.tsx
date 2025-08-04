@@ -82,14 +82,16 @@ const Form = () => {
       }
     };
     callToCheckChain();
+  }, [provider, isConnected]);
 
+  useEffect(() => {
     const retriveUSDRate = async () => {
       const usdRate = await etherToUSD();
       setRate(usdRate);
     };
 
     retriveUSDRate();
-  }, [provider, isConnected]);
+  }, []);
 
   const changeDedicatedNetwok = async () => {
     try {
@@ -129,7 +131,8 @@ const Form = () => {
         const oddInput = oddRefs.current.get(key);
         if (ansInput) {
           formData["answers"].push(ansInput.value);
-          formData["odds"].push(oddInput?.value);
+          const oddVal = Number(oddInput?.value ?? 0);
+          formData["odds"].push(oddVal * 100);
         }
       });
 
