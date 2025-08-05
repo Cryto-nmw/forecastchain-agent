@@ -69,3 +69,35 @@ export async function getForecastGameAbiByAddress(
     }
   }
 }
+
+export async function fetchContracts(agent_id, page, itemsPerPage) {
+  let dbconn;
+
+  try {
+    dbconn = await connectToDB();
+    const offset = (page - 1) * itemsPerPage;
+
+    const query = `SELECT network_name, contract_address, deployed_at 
+     FROM agent_deployed_contracts 
+     WHERE agent_id = ? 
+     ORDER BY deployed_at DESC 
+     LIMIT ? OFFSET ?`;
+    const [contracts] = await dbconn.execute(query, [
+      agent_id,
+      itemsPerPage,
+      offset,
+    ]);
+
+    const countPageQuery = `SELECT COUNT(*) as count 
+     FROM agent_deployed_contracts 
+     WHERE agent_id = ?`;
+
+    const [totalCount] = await dbconn.execute(countPageQuery, [agent_id]);
+    const totalPages = Math.ceil(totalCount[0].count / itemsPerPage);
+    return { contracts, totalPages };
+  } catch (e) {
+    console.error(`Smart Contracts fetching error`, e);
+
+    return null;
+  }
+}

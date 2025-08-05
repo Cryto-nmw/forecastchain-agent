@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useMetaMask } from "../hooks/useMetaMask";
 import InstallMetaMaskModal from "./InstallMetaMaskModal";
 import GameForm from "@/components/GameForm-Grok";
+import ContractGrid from "@/components/AgentContracts";
+import { AGENT_ID } from "@/lib/config";
 
 const MetaMaskConnectorGameForm = () => {
   const { isConnected, account, isInstalled, connectMetaMask, disconnect } =
@@ -56,8 +58,8 @@ const MetaMaskConnectorGameForm = () => {
             Disconnect
           </button>
         </div>
-
         <GameForm />
+        <ContractGrid agentID={AGENT_ID} />
       </>
     );
   }
